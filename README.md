@@ -12,5 +12,5 @@ chmod +x ./multi-su_force
 
 ### Ejemplos
 
-![ejemplo](example/ejemplo.gif)
+![ejemplo](ejemplo.gif)
 
